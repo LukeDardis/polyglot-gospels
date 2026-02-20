@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Polyglot Gospels</title>
+<style>
+body { font-family: Georgia, serif; margin: 40px; }
+.row { display: flex; gap: 20px; }
+.col { flex: 1; }
+.verse { margin-bottom: 10px; }
+select { margin-right: 10px; }
+h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+.greek { font-family: "Palatino Linotype", serif; }
+</style>
+</head>
+<body>
+
+<h1>Polyglot Gospel Viewer</h1>
+
+<select id="gospel"></select>
+<select id="chapter"></select>
+<button onclick="loadText()">Load</button>
+
+<hr>
+
+<div class="row">
+  <div class="col greek">
+    <h2>Greek</h2>
+    <div id="greek"></div>
+  </div>
+  <div class="col">
+    <h2>Latin</h2>
+    <div id="latin"></div>
+  </div>
+  <div class="col">
+    <h2>English (KJV)</h2>
+    <div id="english"></div>
+  </div>
+</div>
+
+<script>
+let data;
+
+fetch("data.json")
+  .then(res => res.json())
+  .then(json => {
+    data = json;
+    populate();
+  });
+
+function populate() {
+  const gospelSelect = document.getElementById("gospel");
+  for (let g in data) {
+    let opt = document.createElement("option");
+    opt.value = g;
+    opt.text = g;
+    gospelSelect.add(opt);
+  }
+  gospelSelect.onchange = updateChapters;
+  updateChapters();
+}
+
+function updateChapters() {
+  const g = document.getElementById("gospel").value;
+  const chapSelect = document.getElementById("chapter");
+  chapSelect.innerHTML = "";
+  for (let c in data[g]) {
+    let opt = document.createElement("option");
+    opt.value = c;
+    opt.text = c;
+    chapSelect.add(opt);
+  }
+}
+
+function loadText() {
+  const g = document.getElementById("gospel").value;
+  const c = document.getElementById("chapter").value;
+  const chapter = data[g][c];
+
+  document.getElementById("greek").innerHTML =
+    chapter.greek.map(v => `<div class="verse">${v}</div>`).join("");
+
+  document.getElementById("latin").innerHTML =
+    chapter.latin.map(v => `<div class="verse">${v}</div>`).join("");
+
+  document.getElementById("english").innerHTML =
+    chapter.english.map(v => `<div class="verse">${v}</div>`).join("");
+}
+</script>
+
+</body>
+</html>
