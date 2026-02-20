@@ -1,0 +1,7 @@
+Promise.all([
+  fetch("data/greek/luke.json").then(r => r.json()),
+  fetch("data/latin/luke.json").then(r => r.json()),
+  fetch("data/english/luke.json").then(r => r.json())
+]).then(([greek, latin, english]) => {
+  // render verses here
+});
